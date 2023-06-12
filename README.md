@@ -1,6 +1,3 @@
-Here's a template for the `README.md` file in English:
-
-```
 # Jellyfin Exporter
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
