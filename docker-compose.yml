@@ -1,0 +1,16 @@
+version: '3.7'
+
+services:
+
+  jellyfin-exporter:
+    image: rafaelvieiras/jellyfin-exporter:latest
+    container_name: jellyfin-exporter
+    ports:
+      - "2112:2112"
+    environment:
+      - JELLYFIN_API_URL=http://your_jellyfin_host:8096
+      - JELLYFIN_TOKEN=your_jellyfin_api_token
+      - SERVER_PORT=2112
+    volumes:
+      - ./config.env:/app/config.env
+    restart: unless-stopped
