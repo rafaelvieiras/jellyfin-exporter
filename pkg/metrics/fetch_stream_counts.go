@@ -15,7 +15,7 @@ var streamCount = prometheus.NewGaugeVec(
 		Name: "jellyfin_stream_count",
 		Help: "Count of streams in Jellyfin",
 	},
-	[]string{"user_id", "username", "client", "device", "play_method", "is_audio_direct", "is_video_direct", "audio_codec", "video_codec", "container", "audio_channels", "transcode_reasons"},
+	[]string{"user_id", "username", "client", "device", "play_method", "audio_codec", "video_codec", "container", "audio_channels", "transcode_reasons"},
 )
 
 func init() {
@@ -46,25 +46,17 @@ func FetchStreamCounts(jellyfinApiUrl, jellyfinToken string) {
 	// Iterar sobre as sessões em andamento
 	for _, session := range data {
 		sessionMap := session.(map[string]interface{})
+		playStateMap := sessionMap["PlayState"].(map[string]interface{})
+
 		playMethod := ""
-		isAudioDirect := false
-		isVideoDirect := false
 		audioCodec := ""
 		videoCodec := ""
 		container := ""
 		audioChannels := 0
 		transcodeReasons := ""
 
-		if sessionMap["PlayMethod"] != nil {
-			playMethod = sessionMap["PlayMethod"].(string)
-		}
-
-		if sessionMap["IsAudioDirect"] != nil {
-			isAudioDirect = sessionMap["IsAudioDirect"].(bool)
-		}
-
-		if sessionMap["IsVideoDirect"] != nil {
-			isVideoDirect = sessionMap["IsVideoDirect"].(bool)
+		if playStateMap["PlayMethod"] != nil {
+			playMethod = playStateMap["PlayMethod"].(string)
 		}
 
 		if sessionMap["AudioCodec"] != nil {
@@ -99,8 +91,6 @@ func FetchStreamCounts(jellyfinApiUrl, jellyfinToken string) {
 				"client":            sessionMap["Client"].(string),
 				"device":            sessionMap["DeviceName"].(string),
 				"play_method":       playMethod,
-				"is_audio_direct":   strconv.FormatBool(isAudioDirect),
-				"is_video_direct":   strconv.FormatBool(isVideoDirect),
 				"audio_codec":       audioCodec,
 				"video_codec":       videoCodec,
 				"container":         container,
